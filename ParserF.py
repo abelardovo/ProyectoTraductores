@@ -24,12 +24,15 @@ start = ""
 #Gramatica para el inicio del programa con o sin funciones
 def p_ProgramEnd(p):
 	'''ProgramEnd : Function TK_Program Instructions TK_End TK_Semicolon
-				  | TK_Program Instructions TK_End TK_Semicolon'''
+				  | TK_Program Instructions TK_End TK_Semicolon
+				  | TK_Program TK_End TK_Semicolon'''
 
 	if len(p) == 6:
 		p[0] = Clases.Exp_ProgramEnd(p.lineno,p[3],p[1])
-	else:
+	elif len(p) == 5:
 		p[0] = Clases.Exp_ProgramEnd(p.lineno,p[2])
+	else:
+		p[0] = Clases.Exp_ProgramEnd(p.lineno)
 	
 
 #Gramatica para los identificadores
@@ -340,7 +343,7 @@ def p_Vector(p):
 	''' Vector : Expresion TK_BracketI Expresion TK_BracketD
 			   | Expresion TK_BracketI Expresion TK_Comma Expresion TK_BracketD'''
 
-				 # ID TK_BracketI ID TK_BracketD
+			  # ID TK_BracketI ID TK_BracketD
 			  #  | ID TK_BracketI Number TK_BracketD
 			  #  | ID TK_BracketI ID TK_Comma ID TK_BracketD
 			  #  | ID TK_BracketI Number TK_Comma Number TK_BracketD
