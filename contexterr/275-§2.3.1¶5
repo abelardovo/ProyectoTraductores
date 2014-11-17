@@ -1,0 +1,1 @@
+program not (foo            /= foo       ); end;

@@ -1,0 +1,1 @@
+function foo() return matrix(1, 1) begin return { 42 } + { 42 };        end; program end;

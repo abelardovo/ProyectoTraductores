@@ -1,0 +1,1 @@
+program use matrix(2, 2) m; in set m[42        , 42        ] = foo            ; end; end;

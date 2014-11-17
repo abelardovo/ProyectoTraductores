@@ -1,0 +1,1 @@
+program use row(42) foo; in for foo in { 42 }    do foo'   ; end; end; end;

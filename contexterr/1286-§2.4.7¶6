@@ -1,0 +1,1 @@
+function foo() return number       begin return not true;               end; program end;

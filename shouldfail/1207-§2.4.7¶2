@@ -1,0 +1,1 @@
+function foo(col(r)                     ) return boolean begin end; program end;

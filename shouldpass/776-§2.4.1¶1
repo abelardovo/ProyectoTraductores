@@ -1,0 +1,1 @@
+program print 42 + 42        , "hello world", "hello world"; end;

@@ -1,0 +1,1 @@
+program for foo in { 42 } do end  end;

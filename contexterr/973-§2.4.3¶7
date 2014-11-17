@@ -1,0 +1,1 @@
+program use row   (2   ) m; in set m        [42        ] = foo            ; end; end;

@@ -1,0 +1,1 @@
+program not (false          /= true          ); end;

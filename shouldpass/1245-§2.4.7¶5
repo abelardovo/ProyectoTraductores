@@ -1,0 +1,1 @@
+function foo(number bar                               ) return number       begin -   foo(foo(42)         ); end; program end;

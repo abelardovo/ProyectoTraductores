@@ -1,0 +1,1 @@
+function foo(number bar, boolean baz, matrix(1,1) quux) return boolean      begin not foo(42, true, { 42 }); end; program end;

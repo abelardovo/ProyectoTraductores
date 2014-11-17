@@ -1,0 +1,1 @@
+program        .div. { 42 }; end;

@@ -1,0 +1,1 @@
+function foo() return col   (3   ) begin return { 42 : 42 };            end; program end;

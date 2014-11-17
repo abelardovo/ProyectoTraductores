@@ -1,0 +1,1 @@
+program if true then return 42; end; end;

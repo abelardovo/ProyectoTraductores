@@ -1,0 +1,1 @@
+function foo(number bar, boolean baz                  ) return boolean      begin not foo(42, { 42 }      ); end; program end;

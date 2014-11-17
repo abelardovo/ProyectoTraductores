@@ -1,0 +1,1 @@
+program use boolean foo; in set foo   true               ; end; end;
