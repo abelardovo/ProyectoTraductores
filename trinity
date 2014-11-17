@@ -1,0 +1,34 @@
+#!/usr/bin/python
+
+'''
+ Traductores e Interpretadores                                                       
+ CI-3725  
+ 
+ Integrantes:   
+                                                              
+	 10-10738 Abelardo Jesus Valino Ovalle                                                
+	 10-10353 Andres Rafael Hernandez Monterola
+
+ Lenguaje Trinity            
+
+'''
+
+import sys
+from LexerF import *
+from ParserF import *
+
+def main():
+
+	tokensEncontrados = Lexer.AnalizadorLex(sys.argv[1])
+
+	if tokensEncontrados:
+		tokensEncontrados[0].lexer.lineno = 1
+
+	AnalizadorParser(sys.argv[1])	
+
+	return 0
+
+
+if __name__ == '__main__':
+
+	main()
