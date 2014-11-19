@@ -36,7 +36,7 @@ def p_ProgramEnd(p):
 		p[0] = Clases.Exp_ProgramEnd(p.lineno,p[2])
 	else:
 		p[0] = Clases.Exp_ProgramEnd(p.lineno)
-		
+
 
 #Gramatica para los identificadores
 def p_ID(p):
@@ -84,7 +84,8 @@ def p_ExpresionAtom(p):
 				 | Number
 				 | ID
 				 | Vector
-				 | MatrixFormatI'''
+				 | MatrixFormatI
+				 | LlamadoFuncion'''
 
 	p[0] = p[1]
 
@@ -188,7 +189,6 @@ def p_InstructionsBase(p):
 						| Use_In
 						| While
 						| For
-						| LlamadoFuncion
 						| Comments
 						| Expresion TK_Semicolon'''
 
@@ -328,10 +328,10 @@ def p_ArgumentoDeclaracionFuncionRecursive(p):
 
 #Gramatica para la llamada de las funciones
 def p_LlamadoFuncion(p):
-	'''LlamadoFuncion : ID TK_ParenI Parameter TK_ParenD TK_Semicolon
-					  | ID TK_ParenI TK_ParenD TK_Semicolon'''				
+	'''LlamadoFuncion : ID TK_ParenI Parameter TK_ParenD
+					  | ID TK_ParenI TK_ParenD'''				
 
-	if len(p) == 6:
+	if len(p) == 5:
 		p[0] = Clases.LlamadoFunction(p.lineno,p[1],p[3])
 	else:
 		p[0] = Clases.LlamadoFunction(p.lineno,p[1])
