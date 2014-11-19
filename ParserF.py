@@ -194,7 +194,10 @@ def p_InstructionsBase(p):
 #Gramatica para los condicionales IF y ELSE
 def p_If_Else(p):
 	'''If_Else : TK_If Expresion TK_Then Instructions TK_End TK_Semicolon
-			   | TK_If Expresion TK_Then Instructions TK_Else Instructions TK_End TK_Semicolon'''
+			   | TK_If Expresion TK_Then Instructions TK_Else Instructions TK_End TK_Semicolon
+			   | TK_If Expresion TK_Then Instructions TK_Else TK_End TK_Semicolon
+			   | TK_If Expresion TK_Then TK_Else Instructions TK_End TK_Semicolon
+			   | TK_If Expresion TK_Then TK_Else TK_End TK_Semicolon'''
 
 
 	if len(p) == 7:
