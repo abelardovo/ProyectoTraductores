@@ -24,16 +24,19 @@ start = ""
 #Gramatica para el inicio del programa con o sin funciones
 def p_ProgramEnd(p):
 	'''ProgramEnd : Function TK_Program Instructions TK_End TK_Semicolon
+				  | Function TK_Program TK_End TK_Semicolon
 				  | TK_Program Instructions TK_End TK_Semicolon
 				  | TK_Program TK_End TK_Semicolon'''
 
 	if len(p) == 6:
 		p[0] = Clases.Exp_ProgramEnd(p.lineno,p[3],p[1])
-	elif len(p) == 5:
+	elif len(p) == 5 and p[3]=="program":
+		p[0] = Clases.Exp_ProgramEnd(p.lineno,None,p[1])
+	elif len(p) == 5 and p[3]!="program":
 		p[0] = Clases.Exp_ProgramEnd(p.lineno,p[2])
 	else:
 		p[0] = Clases.Exp_ProgramEnd(p.lineno)
-	
+		
 
 #Gramatica para los identificadores
 def p_ID(p):
@@ -279,24 +282,37 @@ def p_Type(p):
 #Gramatica para las Funciones
 def p_FunctionBase(p):
 	'''Function :  TK_Function ID TK_ParenI Argumento TK_ParenD TK_Return Type TK_Begin Instructions TK_End TK_Semicolon
-			    |  TK_Function ID TK_ParenI TK_ParenD TK_Return Type TK_Begin Instructions TK_End TK_Semicolon'''
+				|  TK_Function ID TK_ParenI Argumento TK_ParenD TK_Return Type TK_Begin TK_End TK_Semicolon
+			    |  TK_Function ID TK_ParenI TK_ParenD TK_Return Type TK_Begin Instructions TK_End TK_Semicolon
+			    |  TK_Function ID TK_ParenI TK_ParenD TK_Return Type TK_Begin TK_End TK_Semicolon'''
 	
 	p[0] = []
-
+	
 	if len(p) == 12:
 		p[0].append(Clases.Function(p.lineno,p[2],p[7],p[9],p[4]))	
-	else:
+	elif len(p)==11 and p[5]==")":
+		p[0].append(Clases.Function(p.lineno,p[2],p[7],None,p[4]))
+	elif len(p)==11 and p[5]!=")":
 		p[0].append(Clases.Function(p.lineno,p[2],p[6],p[8]))
+	elif len(p)==10:
+		p[0].append(Clases.Function(p.lineno,p[2],p[6]))
 
 def p_Function(p):
 	'''Function : Function TK_Function ID TK_ParenI Argumento TK_ParenD TK_Return Type TK_Begin Instructions TK_End TK_Semicolon
-			    | Function TK_Function ID TK_ParenI TK_ParenD TK_Return Type TK_Begin Instructions TK_End TK_Semicolon'''
+				| Function TK_Function ID TK_ParenI Argumento TK_ParenD TK_Return Type TK_Begin TK_End TK_Semicolon
+			    | Function TK_Function ID TK_ParenI TK_ParenD TK_Return Type TK_Begin Instructions TK_End TK_Semicolon
+			    | Function TK_Function ID TK_ParenI TK_ParenD TK_Return Type TK_Begin TK_End TK_Semicolon'''
 	
 	p[0] = p[1]
+
 	if len(p) == 13:
 		p[0].append(Clases.Function(p.lineno,p[3],p[8],p[10],p[5]))
-	else:
+	elif len(p)==12 and p[6]==")":
+		p[0].append(Clases.Function(p.lineno,p[3],p[7],None,p[5]))
+	elif len(p)==12 and p[6]!=")":
 		p[0].append(Clases.Function(p.lineno,p[3],p[7],p[9]))
+	elif len(p)==11:
+		p[0].append(Clases.Function(p.lineno,p[3],p[7]))
 
 #Gramatica para los argumentos dentro de las firmas de las funciones
 def p_ArgumentoDeclaracionFuncionBase(p): 

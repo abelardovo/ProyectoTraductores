@@ -1073,7 +1073,7 @@ class Function:
 	"""
 
 	#Constructor de la clase
-	def __init__(self,row,identificator,returntype,instructions,variable_declaration=None):
+	def __init__(self,row,identificator,returntype,instructions=None,variable_declaration=None):
 		
 		self.identificator = identificator	
 		self.variable_declaration = variable_declaration 	#Lista de variable_declaration
