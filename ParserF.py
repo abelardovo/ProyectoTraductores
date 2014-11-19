@@ -249,8 +249,12 @@ def p_Use_In(p):
 
 #Gramatica para el For
 def p_For(p):
-	'''For :  TK_For ID TK_In Expresion TK_Do Instructions TK_End TK_Semicolon'''
-	p[0] = Clases.Expre_For(p.lineno,p[2],p[4],p[6])
+	'''For :  TK_For ID TK_In Expresion TK_Do Instructions TK_End TK_Semicolon
+		   |  TK_For ID TK_In Expresion TK_Do TK_End TK_Semicolon'''
+	if len(p)==9:
+		p[0] = Clases.Expre_For(p.lineno,p[2],p[4],p[6])
+	else:
+		p[0] = Clases.Expre_For(p.lineno,p[2],p[4])
 
 #Gramatica para el While
 def p_While(p):

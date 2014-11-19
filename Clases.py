@@ -954,7 +954,7 @@ class Expre_For:
 	"""
 
 	#Constructor de la clase
-	def __init__(self,row,identificator,expression,instructions):
+	def __init__(self,row,identificator,expression,instructions=None):
 		
 		self.identificator = identificator	#Lista de identificadores
 		self.instructions = instructions 	#Lista de instruction
