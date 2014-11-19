@@ -236,6 +236,7 @@ def p_MatrixNumberList(p):
 def p_Use_In(p):
 	'''Use_In :  TK_Use Instructions TK_In Instructions TK_End TK_Semicolon
 			  |  TK_Use Instructions TK_In TK_End TK_Semicolon 
+			  |	 TK_Use TK_In Instructions TK_End TK_Semicolon
 			  |  TK_Use TK_In TK_End TK_Semicolon '''
 
 	p[0] = Clases.Expre_UseIn(p.lineno,p[2],p[4])

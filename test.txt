@@ -1,1 +1,1 @@
-program             end;
+program use in 42      ;                     end; end;
