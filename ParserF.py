@@ -194,6 +194,7 @@ def p_InstructionsBase(p):
 #Gramatica para los condicionales IF y ELSE
 def p_If_Else(p):
 	'''If_Else : TK_If Expresion TK_Then Instructions TK_End TK_Semicolon
+			   | TK_If Expresion TK_Then TK_End TK_Semicolon
 			   | TK_If Expresion TK_Then Instructions TK_Else Instructions TK_End TK_Semicolon
 			   | TK_If Expresion TK_Then Instructions TK_Else TK_End TK_Semicolon
 			   | TK_If Expresion TK_Then TK_Else Instructions TK_End TK_Semicolon
@@ -203,6 +204,8 @@ def p_If_Else(p):
 	if len(p) == 7:
 
 		p[0] = Clases.Expre_If_Else(str(p.lineno),p[2],p[4])
+	elif len(p)==6:
+		p[0] = Clases.Expre_If_Else(str(p.lineno),p[2])
 	else:
 		p[0] = Clases.Expre_If_Else(str(p.lineno),p[2],p[4],p[6])
 
