@@ -500,7 +500,7 @@ class Expre_If_Else:
 	"""Clase que maneja a los condicionales IF <condicion> THEN <Intrucciones> END;"""
 
 	#Constructor de la clase
-	def __init__(self,row,condition,instruction, instruction2 = None):
+	def __init__(self,row,condition,instruction=None, instruction2 = None):
 		
 		self.condition = condition
 		self.instruction = instruction
@@ -914,7 +914,7 @@ class Expre_While:
 	"""
 
 	#Constructor de la clase
-	def __init__(self,row,condition,instructions):
+	def __init__(self,row,condition,instructions=None):
 		
 		self.condition = condition	#Lista de condiciones
 		self.instructions = instructions 	#Lista de instruction

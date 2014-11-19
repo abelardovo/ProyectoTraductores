@@ -254,9 +254,13 @@ def p_For(p):
 
 #Gramatica para el While
 def p_While(p):
-	'''While :  TK_While Expresion TK_Do Instructions TK_End TK_Semicolon'''
+	'''While :  TK_While Expresion TK_Do Instructions TK_End TK_Semicolon
+	         |  TK_While Expresion TK_Do TK_End TK_Semicolon'''
 
-	p[0] = Clases.Expre_While(p.lineno,p[2],p[4])
+	if len(p)==7:
+		p[0] = Clases.Expre_While(p.lineno,p[2],p[4])
+	else:
+		p[0] = Clases.Expre_While(p.lineno,p[2])
 
 #Gramatica para los tipos
 def p_Type(p):
