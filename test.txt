@@ -1,1 +1,1 @@
-program use boolean foo; in if foo  then           end; end; end;
+program return 42; end;

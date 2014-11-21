@@ -14,8 +14,8 @@ function main() {
   shouldfail="$(ls shouldfail | sort -n | sed 's@^@shouldfail/@')"
 
   total=0
-  expect_pass=0; passed_as_expected=0; for test in ${shouldpass}  ${contexterr}; do echo -ne "\r\e[K[${total}] Running: ${test}…"; if ! "${trinity}" "${test}" &> /dev/null; then [[ "${quiet}" == 'true' ]] || echo ' unexpected failure'; else passed_as_expected="$((${passed_as_expected} + 1))"; fi; total="$((${total} + 1))"; expect_pass="$((${expect_pass} + 1))"; done
-  expect_fail=0; failed_as_expected=0; for test in ${shouldfail} 				; do echo -ne "\r\e[K[${total}] Running: ${test}…"; if   "${trinity}" "${test}" &> /dev/null; then [[ "${quiet}" == 'true' ]] || echo ' unexpected pass'   ; else failed_as_expected="$((${failed_as_expected} + 1))"; fi; total="$((${total} + 1))"; expect_fail="$((${expect_fail} + 1))"; done
+  expect_pass=0; passed_as_expected=0; for test in ${shouldpass}  ; do echo -ne "\r\e[K[${total}] Running: ${test}…"; if ! "${trinity}" "${test}" &> /dev/null; then [[ "${quiet}" == 'true' ]] || echo ' unexpected failure'; else passed_as_expected="$((${passed_as_expected} + 1))"; fi; total="$((${total} + 1))"; expect_pass="$((${expect_pass} + 1))"; done
+  expect_fail=0; failed_as_expected=0; for test in ${shouldfail} ${contexterr}				; do echo -ne "\r\e[K[${total}] Running: ${test}…"; if   "${trinity}" "${test}" &> /dev/null; then [[ "${quiet}" == 'true' ]] || echo ' unexpected pass'   ; else failed_as_expected="$((${failed_as_expected} + 1))"; fi; total="$((${total} + 1))"; expect_fail="$((${expect_fail} + 1))"; done
   good="$((${passed_as_expected} + ${failed_as_expected}))"
   total="$((${expect_pass} + ${expect_fail}))"
 
@@ -693,22 +693,22 @@ main <<'EOF'
 
 # §2.3.4.1: Proyección de componente de matriz
 
-§2.3.4¶1 @ shouldpass @ program { 42 }           [42, 42]; end;
-§2.3.4¶1 @ shouldpass @ program { 42 }'          [42, 42]; end;
-§2.3.4¶1 @ shouldpass @ program ({ 42 } + { 42 })[42, 42]; end;
-§2.3.4¶1 @ shouldpass @ program ({ 42 } * { 42 })[42, 42]; end;
+§2.3.4¶1 @ shouldpass @ program { 42 }           [1, 1]; end;
+§2.3.4¶1 @ shouldpass @ program { 42 }'          [1, 1]; end;
+§2.3.4¶1 @ shouldpass @ program ({ 42 } + { 42 })[1, 1]; end;
+§2.3.4¶1 @ shouldpass @ program ({ 42 } * { 42 })[1, 1]; end;
 
-§2.3.4¶1 @ contexterr @ program foo        [42, 42]; end;
-§2.3.4¶1 @ contexterr @ program foo'       [42, 42]; end;
-§2.3.4¶1 @ contexterr @ program (foo + foo)[42, 42]; end;
-§2.3.4¶1 @ contexterr @ program (foo * foo)[42, 42]; end;
+§2.3.4¶1 @ contexterr @ program foo        [1, 1]; end;
+§2.3.4¶1 @ contexterr @ program foo'       [1, 1]; end;
+§2.3.4¶1 @ contexterr @ program (foo + foo)[1, 1]; end;
+§2.3.4¶1 @ contexterr @ program (foo * foo)[1, 1]; end;
 
 §2.3.4¶1 @ shouldfail @ program { 42 }[  ,   ]; end;
-§2.3.4¶1 @ shouldfail @ program { 42 }[42,   ]; end;
-§2.3.4¶1 @ shouldfail @ program { 42 }[  , 42]; end;
-§2.3.4¶1 @ shouldfail @ program       [42, 42]; end;
-§2.3.4¶1 @ shouldfail @ program { 42 }[42  42]; end;
-§2.3.4¶1 @ shouldfail @ program { 42 }[42, 42 ; end;
+§2.3.4¶1 @ shouldfail @ program { 42 }[1,   ]; end;
+§2.3.4¶1 @ shouldfail @ program { 42 }[  , 1]; end;
+§2.3.4¶1 @ shouldfail @ program       [1, 1]; end;
+§2.3.4¶1 @ shouldfail @ program { 1 }[1  1]; end;
+§2.3.4¶1 @ shouldfail @ program { 1 }[1, 1 ; end;
 
 
 
@@ -921,7 +921,7 @@ main <<'EOF'
 
 # §2.4.3¶6: Asignación a posición de matriz
 
-§2.4.3¶6 @ shouldpass @ program use matrix(2, 2) m; in set m[42        , 42        ] = 42             ; end; end;
+§2.4.3¶6 @ shouldpass @ program use matrix(2, 2) m; in set m[1        , 1        ] = 42             ; end; end;
 §2.4.3¶6 @ shouldpass @ program use matrix(2, 2) m; in set m[42 + 42   , 42        ] = 42             ; end; end;
 §2.4.3¶6 @ shouldpass @ program use matrix(2, 2) m; in set m[42        , 42 + 42   ] = 42             ; end; end;
 §2.4.3¶6 @ shouldpass @ program use matrix(2, 2) m; in set m[42        , 42        ] = 42 + 42        ; end; end;
@@ -1145,9 +1145,9 @@ main <<'EOF'
 §2.4.6¶2 @ shouldpass @ program use row   (42  ) foo; in for bar in foo    do            end; end; end;
 §2.4.6¶2 @ shouldpass @ program use col   (42  ) foo; in for bar in foo    do            end; end; end;
 §2.4.6¶2 @ shouldpass @ program use matrix(2, 2) foo; in for bar in foo    do            end; end; end;
-§2.4.6¶2 @ shouldpass @ program use row   (42  ) foo; in for foo in foo    do            end; end; end;
-§2.4.6¶2 @ shouldpass @ program use col   (42  ) foo; in for foo in foo    do            end; end; end;
-§2.4.6¶2 @ shouldpass @ program use matrix(2, 2) foo; in for foo in foo    do            end; end; end;
+§2.4.6¶2 @ contexterr @ program use row   (42  ) foo; in for foo in foo    do            end; end; end;
+§2.4.6¶2 @ contexterr @ program use col   (42  ) foo; in for foo in foo    do            end; end; end;
+§2.4.6¶2 @ contexterr @ program use matrix(2, 2) foo; in for foo in foo    do            end; end; end;
 §2.4.6¶2 @ shouldpass @ program use boolean      foo; in for foo in { 42 } do foo < foo; end; end; end;
 
 §2.4.6¶2 @ contexterr @ program                     for foo in true      do          end;      end;

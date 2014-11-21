@@ -81,8 +81,9 @@ tokens = [
 	'TK_Divcross',
 	'TK_ModScross',
 	'TK_Dividecross',
+	'TK_Comit',
 	'TK_BracketI',
-	'TK_BracketD',
+	'TK_BracketD'
 	] + list(reservado.values())
 
 t_TK_Comma 		= r'\,'
@@ -115,6 +116,7 @@ t_TK_Modcross 	= r'\.mod\.'
 t_TK_Divcross 	= r'\.div\.'
 t_TK_ModScross 	= r'\.\%\.'
 t_TK_Dividecross= r'\.\/\.'
+t_TK_Comit		= r'\''
 t_ignore 		= ' \t'
 
 ''' Definimos las funciones para los Token que tienen un valor, 
@@ -124,7 +126,6 @@ t_ignore 		= ' \t'
 def t_TK_FNumber(t):
 	r'[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?'
 	try:
-
 		t.value = int(t.value)
 		return t
 

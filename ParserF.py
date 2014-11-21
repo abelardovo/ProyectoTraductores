@@ -30,9 +30,9 @@ def p_ProgramEnd(p):
 
 	if len(p) == 6:
 		p[0] = Clases.Exp_ProgramEnd(p.lineno,p[3],p[1])
-	elif len(p) == 5 and p[3]=="program":
+	elif len(p) == 5 and p[2]=="program":
 		p[0] = Clases.Exp_ProgramEnd(p.lineno,None,p[1])
-	elif len(p) == 5 and p[3]!="program":
+	elif len(p) == 5 and p[1]=="program":
 		p[0] = Clases.Exp_ProgramEnd(p.lineno,p[2])
 	else:
 		p[0] = Clases.Exp_ProgramEnd(p.lineno)
@@ -68,8 +68,7 @@ def p_VariableDeclaration(p):
 #Gramatica para la asignacion
 def p_Set(p):
 	'''Set : TK_Set ID TK_Assign Expresion TK_Semicolon
-		   | TK_Set Vector TK_Assign Expresion TK_Semicolon
-		   | TK_Set ID TK_Assign LlamadoFuncion TK_Semicolon'''
+		   | TK_Set Vector TK_Assign Expresion TK_Semicolon'''
 	p[0] = Clases.Expre_Set(p[2],p[4],p.lineno) 
 
 #Gramatica para los booleanos 
@@ -93,14 +92,19 @@ def p_ExpresionAtom(p):
 def p_ExpresionParen(p):
 	'''Expresion : TK_ParenI Expresion TK_ParenD'''
 
-	p[0] = Clases.Exp_Paren(p.lineno,p[1],p[2],p[3])
+	p[0] = p[2]
+	#p[0] = Clases.Exp_Paren(p.lineno,p[1],p[2],p[3])
 
 #Gramatica para el not 
 def p_ExpresionUnario(p):
 	'''Expresion : TK_Not Expresion
-				 | TK_Minus Expresion'''
+				 | TK_Minus Expresion
+				 | Expresion TK_Comit '''
 
-	p[0] = Clases.Exp_Unaria(p.lineno,p[1],p[2])
+	if p[1]== "not" or p[1]== "-":
+		p[0] = Clases.Exp_Unaria(p.lineno,p[1],p[2])
+	elif p[2] =="'":
+		p[0] = Clases.Exp_Unaria(p.lineno,p[2],p[1])
 
 #gramatica para los operadores binarios 
 def p_ExpresionBinarios(p):
@@ -203,14 +207,19 @@ def p_If_Else(p):
 			   | TK_If Expresion TK_Then TK_Else Instructions TK_End TK_Semicolon
 			   | TK_If Expresion TK_Then TK_Else TK_End TK_Semicolon'''
 
-
-	if len(p) == 7:
-
+	if len(p) == 7 and p[4] == "else":
+		p[0] = Clases.Expre_If_Else(str(p.lineno),p[2],None,None)
+	elif len(p) == 7:
 		p[0] = Clases.Expre_If_Else(str(p.lineno),p[2],p[4])
-	elif len(p)==6:
+	elif len(p)==6 and p[4] == "end":
 		p[0] = Clases.Expre_If_Else(str(p.lineno),p[2])
-	else:
+	elif len(p)==9:
 		p[0] = Clases.Expre_If_Else(str(p.lineno),p[2],p[4],p[6])
+	elif len(p)==8 and p[5] == "else":
+		p[0] = Clases.Expre_If_Else(str(p.lineno),p[2],p[4])
+	elif len(p)==8 and p[4] == "else":
+		p[0] = Clases.Expre_If_Else(str(p.lineno),p[2],None,p[5])
+
 
 #Gramatica para el formato de la matriz 
 def p_MatrixFormat(p):
@@ -248,7 +257,15 @@ def p_Use_In(p):
 			  |	 TK_Use TK_In Instructions TK_End TK_Semicolon
 			  |  TK_Use TK_In TK_End TK_Semicolon '''
 
-	p[0] = Clases.Expre_UseIn(p.lineno,p[2],p[4])
+	if len(p) == 7:
+		p[0] = Clases.Expre_UseIn(p.lineno,p[2],p[4])
+	elif len(p) == 6 and p[3] == "in":
+		p[0] = Clases.Expre_UseIn(p.lineno,p[2])
+	elif len(p) == 6 and p[2] == "in":
+		p[0] = Clases.Expre_UseIn(p.lineno,None,p[3])
+	elif len(p) == 5:
+		p[0] = Clases.Expre_UseIn(p.lineno)	
+
 
 #Gramatica para el For
 def p_For(p):
@@ -256,7 +273,7 @@ def p_For(p):
 		   |  TK_For ID TK_In Expresion TK_Do TK_End TK_Semicolon'''
 	if len(p)==9:
 		p[0] = Clases.Expre_For(p.lineno,p[2],p[4],p[6])
-	else:
+	elif len(p)==8:
 		p[0] = Clases.Expre_For(p.lineno,p[2],p[4])
 
 #Gramatica para el While
@@ -352,11 +369,16 @@ def p_ParameterBase(p):
 
 #Gramatica para el tipo matrix
 def p_Matrix(p):
-	'''Matrix : TK_Matrix TK_ParenI Number TK_Comma Number TK_ParenD
-			  | TK_Matrix TK_ParenI ID TK_Comma ID TK_ParenD
-			  | TK_Matrix TK_ParenI Number TK_Comma ID TK_ParenD
-			  | TK_Matrix TK_ParenI ID TK_Comma Number TK_ParenD'''
+	'''Matrix : TK_Matrix TK_ParenI Number TK_Comma Number TK_ParenD'''
+			  #| TK_Matrix TK_ParenI ID TK_Comma ID TK_ParenD
+			  #| TK_Matrix TK_ParenI Number TK_Comma ID TK_ParenD
+			  #| TK_Matrix TK_ParenI ID TK_Comma Number TK_ParenD'''
 	p[0] = Clases.Matrix(p[3],p[5],p.lineno)
+
+# #Gramatica para el tipo matrix
+# def p_MatrixTraspuesta(p):
+# 	'''MatrixT : Expresion TK_Comit '''
+# 	p[0] = p[1]
 
 #Gramatica para el tipo Row
 def p_Row(p):
@@ -405,14 +427,14 @@ def p_error(p):
 
 
 precedence = (
-	('left','TK_Times','TK_Div','TK_Mod','TK_Divide','TK_ModS'),
-	('left','TK_Sum','TK_Minus'),
-	('left','TK_Sumcross','TK_Minuscross'),
-	('left','TK_Timescross','TK_Divcross','TK_Modcross','TK_Dividecross','TK_ModScross'),
-	('left','TK_Not'),
-	('left','TK_And'),
-	('left','TK_Or'),
 	('nonassoc', 'TK_Assign','TK_Equal','TK_Distint','TK_Greater','TK_Greatereq','TK_Less','TK_Lesseq'),	
+	('left','TK_Or'),
+	('left','TK_And'),
+	('left','TK_Not'),
+	('left','TK_Timescross','TK_Divcross','TK_Modcross','TK_Dividecross','TK_ModScross'),
+	('left','TK_Sumcross','TK_Minuscross'),
+	('left','TK_Sum','TK_Minus'),
+	('left','TK_Times','TK_Div','TK_Mod','TK_Divide','TK_ModS'),
 )
 
 

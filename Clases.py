@@ -70,24 +70,9 @@ class SymbolTable():
 	def addSymbol(self,key,value):
 
 		if self.dic.has_key(key):
-			exit()
+			sys.exit(1)
 
 		self.dic[key] = value
-
-	# def addFunction(self,key, returntype, ParamList):
-
-	# 	if self.functions.has_key(key):
-	# 		exit()
-
-	# 	value = []
-
-	# 	value.append(returntype)
-
-	# 	if ParamList <> None:
-	# 		for i in ParamList:
-	# 			value.append(i)
-
-	# 	self.functions[key] = value
 
 	def hasKey(self,key):
 
@@ -142,6 +127,9 @@ class Number():
 	def getValue(self):
 		return int(self.value)
 
+	def getInstance(self):
+		return self.value
+
 	#Funcion para imprimir
 	def printI(self, cantidad):
 
@@ -177,7 +165,7 @@ class Identificator:
 
 		if SymbolTable.hasKey(self.value) == False:
 			print "ERROR: El identificador no se encuentra en la Tabla de Simbolos: " + str(self.value)
-			exit()
+			sys.exit(1)
 
 		return SymbolTable.findTypeOf(self.value)
 
@@ -236,6 +224,10 @@ class Matrix:
 	# Constructor de la clase
 	def __init__(self,R,C,row):
 
+		if isinstance(R.getInstance(),float) or isinstance(C.getInstance(),float):
+			print "ERROR: Ni las filas ni las columnas pueden ser punto flotante"
+			sys.exit(1)
+
 		self.R = R
 		self.C = C
 		self.row = row
@@ -273,96 +265,16 @@ class Matrix:
 
 	def typechecking(self,SymbolTable):
 
+		if self.getR() == 0 or self.getC() == 0:
+			print "ERROR: la matriz no puede ser declarada con filas o columnas iguales a cero"
+			sys.exit(1)
+
+		if self.R.typechecking(SymbolTable) <> "number" or self.C.typechecking(SymbolTable) <> "number":
+			print "ERROR: R y C tienen que ser numeros"
+			sys.exit(1)
+
+
 		return self.type
-
-# class Row:
-# 	"""Clase que maneja a las Filas "row(r)" """
-
-# 	# Constructor de la clase
-# 	def __init__(self,R,row):
-
-# 		self.R = R
-# 		self.row = row
-	
-# 	def getRow(self):
-# 		return set.row
-		
-# 	#Funcion para imprimir
-# 	def printI(self, cantidad):
-
-# 		print cantidad, "Vector Fila: "
-# 		self.R.printI(Identacion(cantidad))
-
-
-# class Column:
-# 	"""Clase que maneja a las Columnas "column(c)" """
-
-# 	# Constructor de la clase
-# 	def __init__(self,C,row):
-
-# 		self.C = C
-# 		self.row = row
-	
-# 	def getRow(self):
-# 		return set.row
-		
-# 	#Funcion para imprimir
-# 	def printI(self, cantidad):
-
-# 		print cantidad, "Vector Columna: "
-# 		self.C.printI(Identacion(cantidad))
-
-# class RowFormat:
-# 	"""Clase que maneja a los formatos de las Filas 
-# 	"{valor1,valor2,valor3}" """
-
-# 	# Constructor de la clase
-# 	def __init__(self,row,R = None):
-
-# 		self.R = R 	#Lista de Filas
-# 		self.row = row
-	
-# 	def getRow(self):
-# 		return set.row
-		
-# 	#Funcion para imprimir
-# 	def printI(self, cantidad):
-
-# 		print cantidad, "Fila: "
-		
-# 		if self.R:
-# 			for i in self.R:
-# 				print cantidad, " Valor: "
-# 				self.R.printI(Identacion(cantidad))
-# 		else: 
-# 			print cantidad, " Valor: Vacio"
-
-
-# class ColumnFormat:
-# 	"""Clase que maneja a los formatos de las Columnas 
-# 	"{valor1:valor2:valor3}" """
-
-# 	# Constructor de la clase
-# 	def __init__(self,row,C = None):
-
-# 		self.C = C 	#Lista de Columnas
-# 		self.row = row
-	
-# 	def getRow(self):
-# 		return set.row
-		
-# 	#Funcion para imprimir
-# 	def printI(self, cantidad):
-
-# 		print cantidad, "Columna: "
-		
-# 		if self.C:
-# 			for i in self.C:
-# 				print cantidad, " Valor: "
-# 				self.C.printI(Identacion(cantidad))
-# 		else: 
-# 			print cantidad, " Valor: Vacio"
-
 
 class MatrixFormat:
 	"""Clase que maneja a los formatos de las Matrices 
@@ -389,7 +301,7 @@ class MatrixFormat:
 
 				if j <> 1 and k <> mayork:
 					print "ERROR: La cantidad de columnas no son iguales en todas las columnas"
-					exit()
+					sys.exit(1)
 					
 				j = j + 1
 				k = 1
@@ -414,7 +326,7 @@ class MatrixFormat:
 
 				if j <> 1 and k <> mayork:
 					print "ERROR: La cantidad de columnas no son iguales en todas las filas"
-					exit()
+					sys.exit(1)
 					
 				j = j + 1
 				k = 1
@@ -443,7 +355,7 @@ class MatrixFormat:
 
 				if j <> 1 and k <> mayork:
 					print "ERROR: La cantidad de columnas no son iguales en todas las filas"
-					exit()
+					sys.exit(1)
 					
 				j = j + 1
 				k = 1
@@ -474,7 +386,7 @@ class MatrixFormat:
 
 				if j <> 1 and k <> mayork:
 					print "ERROR: La cantidad de columnas no son iguales en todas las columnas"
-					exit()
+					sys.exit(1)
 
 				j = j + 1
 				k = 1
@@ -489,7 +401,7 @@ class MatrixFormat:
 
 				if i.typechecking(SymbolTable) <> "number":
 					print "ERROR: Los elementos de la matriz solo puede ser de tipo Numerico"
-					exit()
+					sys.exit(1)
 
 		return "matriz"
 		#return Matrix(Number(self.getR(),self.row),Number(self.getC(),self.row),self.row)
@@ -518,9 +430,11 @@ class Expre_If_Else:
 		self.condition.printI(Identacion(cantidad)) #imprime la condicion
 
 		print cantidad, "Expresion THEN: "
-		for j in self.instruction:
-			print cantidad, " Instruciones: "
-			j.printI(Identacion(cantidad))	#imprime la instruccion
+
+		if self.instruction:
+			for j in self.instruction:
+				print cantidad, " Instruciones: "
+				j.printI(Identacion(cantidad))	#imprime la instruccion
 
 		#imprime siguiente instruccion si la hay
 		if self.instruction2 <> None:
@@ -533,10 +447,12 @@ class Expre_If_Else:
 
 		if self.condition.typechecking(SymbolTable) <> "boolean":
 			print "ERROR: El tipo del condicional del if tiene que ser booleano"
-			exit()
+			sys.exit(1)
 
-		for j in self.instruction:
-			j.typechecking(SymbolTable)	
+		if self.instruction:
+			for j in self.instruction:
+				print j
+				j.typechecking(SymbolTable)	
 
 		if self.instruction2:
 			for k in self.instruction2:
@@ -570,24 +486,29 @@ class Expre_Set:
 
 		if SymbolTable.hasKey(self.identificator.getValue()) == False:
 			print "ERROR: Variable no ha sido declarada: " + str(self.identificator.getValue())
-			exit()
+			sys.exit(1)
 
 		else:
 
 			identificatorType = self.identificator.typechecking(SymbolTable)
 			expressionType = self.expression.typechecking(SymbolTable)
 
-			if identificatorType == "number" or identificatorType == "boolean":
+
+			if expressionType == "matriz":
+				expressionType = self.expression
+
+			if identificatorType == "number" or identificatorType == "boolean" or expressionType== "number" or expressionType== "boolean":
 
 				if identificatorType <> expressionType:
 					print "ERROR: el tipo de las expresion es distinto al del identificador "
-					exit()
+					sys.exit(1)
 
-			elif isinstance(identificatorType, Matrix) and isinstance(expressionType, Matrix):
+			elif (isinstance(identificatorType, Matrix) and isinstance(expressionType, Matrix)) or (isinstance(identificatorType, Matrix) and isinstance(expressionType, MatrixFormat)):
 
 				if identificatorType.getR() <> expressionType.getR() or identificatorType.getC() <> expressionType.getC():
 					print "ERROR: el tamanio de la matriz en el identificador es distinto al de la expresion"
-					exit()
+					sys.exit(1)
+
 
 
 class Variable_Declaration:
@@ -648,7 +569,7 @@ class Variable_Declaration:
 
 		if SymbolTable.dic.has_key(self.identificator.getValue()):
 			print "ERROR: Variable ya declarada dentro del alcance"
-			exit()
+			sys.exit(1)
 
 		if self.expression <> None:
 
@@ -656,7 +577,7 @@ class Variable_Declaration:
 
 				if self.expression.typechecking(SymbolTable) <> self.identificator_type:
 					print "ERROR: El tipo declarado no coincide con el tipo de la expresion"
-					exit()
+					sys.exit(1)
 
 			elif isinstance(self.identificator_type, Matrix):
 
@@ -664,22 +585,24 @@ class Variable_Declaration:
 
 					if self.expression.typechecking(SymbolTable) <> "matriz":
 						print "ERROR: El tipo declarado no coincide con el tipo de la expresion matrix"
-						exit()
+						sys.exit(1)
 
 					if self.expression.getR() <> self.identificator_type.getR() or self.expression.getC() <> self.identificator_type.getC():
 						print "ERROR: Las filas o las columnas no coinciden"
-						exit()
+						sys.exit(1)
 
 				elif isinstance(self.expression,Exp_Binaria):
 
 					if self.expression.typechecking(SymbolTable).typechecking(SymbolTable) <> "matriz":
 						print "ERROR: El tipo declarado no coincide con el tipo de la expresion matrix"
-						exit()
+						sys.exit(1)
 
 					if self.expression.typechecking(SymbolTable).getR() <> self.identificator_type.getR() or self.expression.typechecking(SymbolTable).getC() <> self.identificator_type.getC():
 						print "ERROR: Las filas o las columnas no coinciden"
-						exit()
+						sys.exit(1)
 
+		if isinstance(self.identificator_type,Matrix):
+			self.identificator_type.typechecking(SymbolTable)
 
 		SymbolTable.addSymbol(self.identificator.getValue(),self.identificator_type)
 
@@ -710,12 +633,16 @@ class Expre_Read:
 
 		if SymbolTable.hasKey(self.identificator.getValue()) == False:
 			print "ERROR: El identificador no esta declarado"
+			sys.exit(1)
 
-			exit()
+		if self.identificator.typechecking(SymbolTable) == "boolean" or self.identificator.typechecking(SymbolTable) == "number":
+			pass
+		
+		else:
 
-		# if self.identificator.typechecking(SymbolTable) <> "NotDeclared":
-		# 	print "ERROR: El identificador esta siendo utilizado en otro lado"
-		# 	exit()
+			print "ERROR: El identificador solo puede ser booleano o un numero"
+			sys.exit(1)
+
 
 class Expre_Vector:
 	"""Clase que maneja los vectores
@@ -753,38 +680,58 @@ class Expre_Vector:
 
 	def typechecking(self,SymbolTable):
 
-		if isinstance(self.identificator.typechecking(SymbolTable), Matrix) == False:
-			print "ERROR: el identificador no es una matriz declarada"
+
+		ExpresionBaseI = self.identificator
+
+		if isinstance(ExpresionBaseI, Exp_Unaria):
+			ExpresionBaseI.typechecking(SymbolTable)
+
+		if isinstance(ExpresionBaseI, Identificator):
+
+			if isinstance(ExpresionBaseI.typechecking(SymbolTable), Matrix) == False:
+				print "ERROR: el identificador no es una matriz declarada"
+				sys.exit(1)
+
+			ExpresionBaseI = ExpresionBaseI.typechecking(SymbolTable)
+
+
+		elif isinstance(ExpresionBaseI, Matrix) or isinstance(ExpresionBaseI, MatrixFormat):
+			ExpresionBaseI = self.identificator
+		
+		elif isinstance(ExpresionBaseI, Exp_Binaria):
+			ExpresionBaseI = ExpresionBaseI.typechecking(SymbolTable)
+
+
 
 		if self.fila.typechecking(SymbolTable) <> "number":
 			print "ERROR: el tipo de la fila tiene que ser un numero"
-			exit()
+			sys.exit(1)
 
 		else:
 
 			if self.columna <> None:
 				if self.columna.typechecking(SymbolTable) <> "number":
 					print "ERROR: el tipo de la columna tiene que ser un numero"
-					exit()
+					sys.exit(1)
 
 				else: 
 
-					if (self.columna.getValue() > self.identificator.typechecking(SymbolTable).getC()):
-						print "ERROR: La cantidad de columnas pedida es mayor a la cantidad de columnas que tiene la matriz"
-						exit() 
+					# if (self.columna.getValue() > ExpresionBaseI.getC()):
+					# 	print "ERROR: La cantidad de columnas pedida es mayor a la cantidad de columnas que tiene la matriz"
+					# 	sys.exit(1) 
 
-					elif (self.fila.getValue() > self.identificator.typechecking(SymbolTable).getR()):
-						print "ERROR: La cantidad de filas pedida es mayor a la cantidad de filas que tiene la matriz"
-						exit() 
+					# elif (self.fila.getValue() > ExpresionBaseI.getR()):
+					# 	print "ERROR: La cantidad de filas pedida es mayor a la cantidad de filas que tiene la matriz"
+					# 	sys.exit(1) 
 
 
 					return "number"
 
 			else:
 
-				if self.fila.typechecking(SymbolTable) <> "number":
-					print "ERROR: La cantidad de fila pedida es mayor a la cantidad de filas que tiene la matriz"
-					exit() 
+				# if self.fila.typechecking(SymbolTable) <> "number":
+				# 	print "ERROR: La cantidad de fila pedida es mayor a la cantidad de filas que tiene la matriz"
+				# 	sys.exit(1) 
 
 				return "number"
 
@@ -803,6 +750,9 @@ class Expre_ReturnExpresion:
 	
 	def getRow(self):
 		return set.row
+
+	def getExpression(self):
+		return self.expresion
 	
 	#Funcion para imprimir
 	def printI(self, cantidad):
@@ -813,7 +763,7 @@ class Expre_ReturnExpresion:
 
 	def typechecking(self,SymbolTable):
 
-		self.expresion.typechecking(SymbolTable)
+		return self.expresion.typechecking(SymbolTable)
 
 
 class Inst_PrintExpresion:
@@ -856,7 +806,7 @@ class Expre_UseIn:
 	"""
 
 	#Constructor de la clase
-	def __init__(self,row,declarations,instructions):
+	def __init__(self,row,declarations=None,instructions=None):
 		
 		self.declarations = declarations	#Lista de declaracion
 		self.instructions = instructions 	#Lista de instruction
@@ -870,38 +820,41 @@ class Expre_UseIn:
 
 		print cantidad, "Expresion Use: "
 
-		for i in self.declarations:
-			print cantidad, " Declaracion: "
-			i.printI(Identacion(cantidad))
+		if self.declarations:
+			for i in self.declarations:
+				print cantidad, " Declaracion: "
+				i.printI(Identacion(cantidad))
 	
 		print cantidad, "Expresion In: "
 
-		for j in self.instructions:
-			print cantidad, " Instruccion: "
-			j.printI(Identacion(cantidad))
+		if self.instructions:
+			for j in self.instructions:
+				print cantidad, " Instruccion: "
+				j.printI(Identacion(cantidad))
 
 	def typechecking(self,STable):
 
 		NewSymbolTable = SymbolTable(STable)
 		STable.born(NewSymbolTable)
 
-		for i in self.declarations:
+		if self.declarations:
+			for i in self.declarations:
 
-			if isinstance(i, Exp_Comments) or isinstance(i, Variable_Declaration) :
-				i.typechecking(NewSymbolTable)	
-			else:
-				print "ERROR: dentro del alcance del USE no puede haber una instruccion que sea distinta de 'Declaracion de Variables'"
-				exit()
+				if isinstance(i, Exp_Comments) or isinstance(i, Variable_Declaration) :
+					i.typechecking(NewSymbolTable)	
+				else:
+					print "ERROR: dentro del alcance del USE no puede haber una instruccion que sea distinta de 'Declaracion de Variables'"
+					sys.exit(1)
 
 
+		if self.instructions:
+			for j in self.instructions:
 
-		for j in self.instructions:
+				if isinstance(j, Variable_Declaration):
+					print "ERROR: solo se puede declarar variables dentro del alcance del USE"
+					sys.exit(1)
 
-			if isinstance(j, Variable_Declaration):
-				print "ERROR: solo se puede declarar variables dentro del alcance del USE"
-				exit()
-
-			j.typechecking(NewSymbolTable)		
+				j.typechecking(NewSymbolTable)		
 
 
 class Expre_While:
@@ -930,18 +883,20 @@ class Expre_While:
 		print cantidad, " Condicion: "
 		self.condition.printI(Identacion(cantidad))
 
-		for j in self.instructions:
-			print cantidad, " Instruccion: "
-			j.printI(Identacion(cantidad))
+		if self.instructions:
+			for j in self.instructions:
+				print cantidad, " Instruccion: "
+				j.printI(Identacion(cantidad))
 
 	def typechecking(self,SymbolTable):
 
 		if self.condition.typechecking(SymbolTable) <> "boolean":
 			print "ERROR: el tipo de la condicion del while no es un booleano"
-			exit()
+			sys.exit(1)
 
-		for j in self.instructions:
-			j.typechecking(SymbolTable)		
+		if self.instructions:
+			for j in self.instructions:
+				j.typechecking(SymbolTable)		
 
 
 class Expre_For:
@@ -972,9 +927,11 @@ class Expre_For:
 		self.identificator.printI(Identacion(cantidad))
 		print cantidad, " Expresion: "
 		self.expression.printI(Identacion(cantidad))
-		for j in self.instructions:
-			print cantidad, " Instruccion: "
-			j.printI(Identacion(cantidad))
+
+		if self.instructions:
+			for j in self.instructions:
+				print cantidad, " Instruccion: "
+				j.printI(Identacion(cantidad))
 
 	def typechecking(self,STable):
 
@@ -985,15 +942,18 @@ class Expre_For:
 
 		ExpressionType = self.expression.typechecking(NewSymbolTable)
 
+
 		if isinstance(ExpressionType, Matrix):
 			ExpressionType = ExpressionType.typechecking(NewSymbolTable)
 
 		if ExpressionType <> "matriz":
 			print "ERROR: la expresion no es de tipo matricial"
-			exit()
+			sys.exit(1)
 
-		for j in self.instructions:
-			j.typechecking(NewSymbolTable)
+		if self.instructions:
+
+			for j in self.instructions:
+				j.typechecking(NewSymbolTable)
 
 
 class LlamadoFunction:
@@ -1019,15 +979,17 @@ class LlamadoFunction:
 		print cantidad, "Funcion: "
 		print cantidad, " Identificador: "
 		self.identificator.printI(Identacion(cantidad))
-		for j in self.ListIdentification:
-			print cantidad, " Parametro: "
-			j.printI(Identacion(cantidad))
+
+		if self.ListIdentification:
+			for j in self.ListIdentification:
+				print cantidad, " Parametro: "
+				j.printI(Identacion(cantidad))
 
 	def typechecking(self,STable):
 
 		if STable.hasKey(self.identificator.getValue()) == False:
 			print "ERROR: La funcion no existe"
-			exit()
+			sys.exit(1)
 
 		FunctionType = STable.findTypeOf(self.identificator.getValue())
 
@@ -1035,29 +997,47 @@ class LlamadoFunction:
 		ParameterOrder = FunctionType[1]
 		FunctionTable = FunctionType[2]
 
-		if len(ParameterOrder) <> len(self.ListIdentification):
-			print "ERROR: la cantidad de parametros no son iguales"
-			exit()
+		if self.ListIdentification:
+			if len(ParameterOrder) <> len(self.ListIdentification):
+				print "ERROR: la cantidad de parametros no son iguales"
+				sys.exit(1)
 
-		i = 0
+			i = 0
 
-		while i < len(ParameterOrder):
+			while i < len(ParameterOrder):
 
-			if FunctionTable.findTypeOf(ParameterOrder[i]) == "number" or FunctionTable.findTypeOf(ParameterOrder[i]) == "boolean":
-				if FunctionTable.findTypeOf(ParameterOrder[i]) <> self.ListIdentification[i].typechecking(STable):
-					print "ERROR: Los tipos de los paramatros no son iguales"
-					exit()
 
-			elif FunctionTable.findTypeOf(ParameterOrder[i]) == "matriz":
+				if FunctionTable.findTypeOf(ParameterOrder[i]) == "number" or FunctionTable.findTypeOf(ParameterOrder[i]) == "boolean":
+					if FunctionTable.findTypeOf(ParameterOrder[i]) <> self.ListIdentification[i].typechecking(STable):
+						print "ERROR: Los tipos de los paramatros no son iguales"
+						sys.exit(1)
 
-				if isinstance(self.ListIdentification[i].typechecking(STable), Matrix) == False:
-					print "ERROR: Los tipos de los paramatros no son igualesss"
-					exit()					
+				elif FunctionTable.findTypeOf(ParameterOrder[i]) == "matriz":
 
-			i = i + 1
+					if isinstance(self.ListIdentification[i].typechecking(STable), Matrix) == False:
+						print "ERROR: Los tipos de los paramatros no son igualesss"
+						sys.exit(1)	
+
+				elif isinstance(FunctionTable.findTypeOf(ParameterOrder[i]), Matrix):
+
+					if (FunctionTable.findTypeOf(ParameterOrder[i])).getR() <> self.ListIdentification[i].getR():
+						print "ERROR: la cantidad de filas es distinta"
+						sys.exit(1)
+
+					elif FunctionTable.findTypeOf(ParameterOrder[i]).getC() <> self.ListIdentification[i].getC():
+						print "ERROR: la cantidad de columnas es distinta"
+						sys.exit(1)
+
+
+				i = i + 1
 
 		if isinstance(returnType, str):
 			return returnType
+
+		if isinstance(returnType, Matrix):
+			return returnType
+
+		print returnType.typechecking(STable)
 
 		return returnType.typechecking(STable)
 
@@ -1103,25 +1083,29 @@ class Function:
 			print cantidad, self.returntype
 		else:
 			self.returntype.printI(Identacion(cantidad))
+		
+		if self.instructions:
 
-		for i in self.instructions:
-			print cantidad, " Instruccion: "
+			for i in self.instructions:
+				print cantidad, " Instruccion: "
 
-			if (isinstance(i,int) or isinstance(i,str)):
-				print cantidad, i
-			else:
-				i.printI(Identacion(cantidad))
+				if (isinstance(i,int) or isinstance(i,str)):
+					print cantidad, i
+				else:
+					i.printI(Identacion(cantidad))
 
 	def typechecking(self,STable):
 
 		if STable.hasKey(self.identificator):
 			print "ERROR: ya existe una funcion con ese Nombre"
-			exit()
+			sys.exit(1)
 
 		NewSymbolTable = SymbolTable(STable)
 		STable.born(NewSymbolTable)
 
 		ParameterOrder = []
+
+		returnsDentroDeFuncion = []
 
 		if self.variable_declaration <> None:
 
@@ -1129,7 +1113,7 @@ class Function:
 
 				if NewSymbolTable.hasKey(i.getIdentificator()):
 					print "ERROR: identificador ya fue declarado"
-					exit()
+					sys.exit(1)
 
 				ParameterOrder.append(i.getIdentificator())
 				NewSymbolTable.addSymbol(i.getIdentificator(),i.getType(STable))
@@ -1142,36 +1126,38 @@ class Function:
 
 		STable.addSymbol(self.identificator.getValue(),FunctionType)
 
-		#STable.printI(Identacion(""))
+		if self.instructions:
+			for j in self.instructions:
 
-		for j in self.instructions:
-			j.typechecking(NewSymbolTable)
+				if isinstance(j, Expre_ReturnExpresion):
+
+					if j.typechecking(NewSymbolTable) <> "matriz":
+						returnsDentroDeFuncion.append(j.typechecking(NewSymbolTable))
+					else:
+						returnsDentroDeFuncion.append(j.getExpression())
+
+				j.typechecking(NewSymbolTable)
 
 
+		SonDistintos = False
 
-# class Instruccion:
-# 	"""Clase que maneja las Instruccion  
+		if returnsDentroDeFuncion <> []:
+			for k in returnsDentroDeFuncion:
 
-# 		<Instruccion>
+				if k == self.returntype:
+					pass
+				elif (isinstance(k,Matrix) and isinstance(self.returntype,Matrix)) or (isinstance(k,MatrixFormat) and isinstance(self.returntype,Matrix)) or (isinstance(k,Matrix) and isinstance(self.returntype,MatrixFormat)) or (isinstance(k,MatrixFormat) and isinstance(self.returntype,MatrixFormat)) :
 
-# 	"""
+					if k.getR() <> self.returntype.getR() or k.getC() <> self.returntype.getC():
+						print "ERROR: las matrices en los return son de distinto tamanio"
+						sys.exit(1)
+				else:
+					SonDistintos = True
 
-# 	#Constructor de la clase
-# 	def __init__(self,row,instruccion):
 			
-# 		self.instruccion = instruccion 		#Lista de instrucciones
-# 		self.row = row
-	
-# 	def getRow(self):
-# 		return set.row
-	
-# 	#Funcion para imprimir
-# 	def printI(self, cantidad):
-
-# 		print cantidad, "Instruccion: "
-# 		for i in self.instruccion:
-# 			print cantidad, " "
-# 			i.printI(Identacion(cantidad))
+			if SonDistintos: 
+				print "ERROR: los tipos de los return son distintos"
+				sys.exit(1)
 
 class Exp_Comments:
 	"""Clase que maneja los Comentarios   
@@ -1258,8 +1244,12 @@ class Exp_Binaria:
 
 	def typechecking(self,SymbolTable):
 
-		RightType = self.rightexpression.typechecking(SymbolTable)
-		LeftType = self.leftexpression.typechecking(SymbolTable)
+
+		ExpresionBaseR =  self.rightexpression
+		ExpresionBaseL = self.leftexpression
+
+		RightType = ExpresionBaseR.typechecking(SymbolTable)
+		LeftType = ExpresionBaseL.typechecking(SymbolTable)
 
 		if isinstance(RightType, Matrix):
 			RightType = RightType.typechecking(SymbolTable)
@@ -1267,10 +1257,29 @@ class Exp_Binaria:
 		if isinstance(LeftType, Matrix):
 			LeftType = LeftType.typechecking(SymbolTable)
 
+		if isinstance(ExpresionBaseL, Exp_Binaria):
+			ExpresionBaseL = ExpresionBaseL.typechecking(SymbolTable)
+
+		if isinstance(ExpresionBaseR, Exp_Binaria):
+			ExpresionBaseR = ExpresionBaseR.typechecking(SymbolTable)
+
+		if isinstance(ExpresionBaseL, Exp_Unaria):
+			ExpresionBaseL = ExpresionBaseL.typechecking(SymbolTable)
+
+		if isinstance(ExpresionBaseR, Exp_Unaria):
+			ExpresionBaseR = ExpresionBaseR.typechecking(SymbolTable)
+
+		if isinstance(ExpresionBaseL, LlamadoFunction):
+			ExpresionBaseL = ExpresionBaseL.typechecking(SymbolTable)
+
+		if isinstance(ExpresionBaseR, LlamadoFunction):
+			ExpresionBaseR = ExpresionBaseR.typechecking(SymbolTable)
+
+
 		A = self.operator == "+"
 		B = self.operator == "-"
 		C = self.operator == "*"
-		D = self.operator == "\/"
+		D = self.operator == "/"
 		M = self.operator == "%"
 		N = self.operator == "mod"
 		O = self.operator == "div"
@@ -1289,10 +1298,12 @@ class Exp_Binaria:
 		P = self.operator == ".+."
 		Q = self.operator == ".-."
 		R = self.operator == ".*."
-		S = self.operator == ".\/."
+		S = self.operator == "./."
 		T = self.operator == ".%."
 		U = self.operator == ".mod."
 		V = self.operator == ".div."
+
+		# print LeftType,RightType
 
 		if RightType == LeftType and RightType == "number":
 
@@ -1304,52 +1315,60 @@ class Exp_Binaria:
 
 			else: 
 				print "ERROR: El operador '", str(self.operator), "', no opera con numeros"
-				exit()
+				sys.exit(1)
 
 		elif RightType == LeftType and RightType == "matriz":
 
+
 			if A or B:
 
-				if self.rightexpression.getR() == self.leftexpression.getR() and self.rightexpression.getC() == self.leftexpression.getC():
-					return Matrix(Number(self.rightexpression.getR(),self.row),Number(self.rightexpression.getC(),self.row),self.row)
+				if ExpresionBaseR.getR() == ExpresionBaseL.getR() and ExpresionBaseR.getC() == ExpresionBaseL.getC():
+					return Matrix(Number(ExpresionBaseR.getR(),self.row),Number(ExpresionBaseR.getC(),self.row),self.row)
 
 				else:
 					print "ERROR: El tamanio de las filas y columna no son iguales"
-					exit()
+					sys.exit(1)
 
 			elif C :
 
-				if self.leftexpression.getC() == self.rightexpression.getR():
-					return Matrix(Number(self.leftexpression.getR(),self.row),Number(self.rightexpression.getC(),self.row),self.row)
+				if ExpresionBaseL.getC() == ExpresionBaseR.getR():
+					return Matrix(Number(ExpresionBaseL.getR(),self.row),Number(ExpresionBaseR.getC(),self.row),self.row)
 
 				else:
 					print "ERROR: El tamanio de la columnas de la matriz izq no es igual a las filas de la matriz der"
-					exit()
+					sys.exit(1)
 
 			elif I or J:
+				
+				if ExpresionBaseR.getR() == ExpresionBaseL.getR() and ExpresionBaseR.getC() == ExpresionBaseL.getC():
+					return "boolean"
+
+				else:
+					print "ERROR: El tamanio de las filas y columna no son iguales"
+					sys.exit(1)
 				return "boolean"
 
 			else:
 				print "ERROR: el operador no soporta operaciones con matrices"
-				exit()
+				sys.exit(1)
 
 		elif (RightType == "matriz" and LeftType == "number"):
 
 			if P or Q or R or S or T or U or V:
-				return Matrix(Number(self.rightexpression.typechecking(SymbolTable).getR(),self.row),Number(self.rightexpression.typechecking(SymbolTable).getC(),self.row),self.row)
+				return Matrix(Number(ExpresionBaseR.getR(),self.row),Number(ExpresionBaseR.getC(),self.row),self.row)
 			else:
 				print "ERROR: el operador no soporta operaciones entre matrices y numeros"
-				exit()				
+				sys.exit(1)				
 
 
 		elif (LeftType == "matriz" and RightType == "number"):
 			
 			if P or Q or R or S or T or U or V:
 
-				return Matrix(Number(self.leftexpression.typechecking(SymbolTable).getR(),self.row),Number(self.leftexpression.typechecking(SymbolTable).getC(),self.row),self.row)
+				return Matrix(Number(ExpresionBaseL.getR(),self.row),Number(ExpresionBaseL.getC(),self.row),self.row)
 			else:
 				print "ERROR: el operador no soporta operaciones entre matrices y numeros"
-				exit()	
+				sys.exit(1)	
 
 		elif RightType == LeftType and RightType == "boolean":
 
@@ -1358,17 +1377,19 @@ class Exp_Binaria:
 
 			else:
 				print "ERROR: el operador no soporta operaciones con booleanos"
-				exit()
+				sys.exit(1)
 
 		else:
 
 			print "ERROR: Los tipos de las expresiones no son comparables"
-			exit()			
+			sys.exit(1)			
 
 class Exp_Unaria:
 	"""Clase que maneja las expresiones unarias 
 
 		not Exp
+		- Exp
+		exp '
 	"""
 
 	#Constructor de la clase
@@ -1391,15 +1412,46 @@ class Exp_Unaria:
 
 		expType = self.rightexpression.typechecking(SymbolTable)
 
-		if expType == "boolean":
+
+		# if isinstance(expType, Exp_Unaria):
+		# 	expType = expType.typechecking(SymbolTable)		
+
+		# if isinstance(expType, Matrix):
+		# 	expType = expType.typechecking(SymbolTable)
+
+		# print expType, self.operator
+
+		if expType == "boolean" and self.operator == "not":
 			return "boolean"
+
+		elif expType == "number" and self.operator == "-":
+			return "number"
+
+		elif ((isinstance(expType, Exp_Unaria) or isinstance(expType, Matrix) ) and self.operator == "'"):
+
+			return Matrix(Number(expType.getC(),self.row),Number(expType.getR(),self.row),self.row) 
+
+		elif ((isinstance(expType, Exp_Unaria) or isinstance(expType, Matrix) ) and self.operator == "-"):
+
+			return Matrix(Number(expType.getR(),self.row),Number(expType.getC(),self.row),self.row) 
+
+		elif (expType == "matriz" and self.operator == "-"):
+			
+
+			return Matrix(Number(self.rightexpression.getR(),self.row),Number(self.rightexpression.getC(),self.row),self.row) 
+
+
+		elif (expType == "matriz" and self.operator == "'"):
+			
+			return Matrix(Number(self.rightexpression.getC(),self.row),Number(self.rightexpression.getR(),self.row),self.row) 
+
+			# return "matriz"
 
 		else:
 
 			print "ERROR: La expresion: "
-			self.rightexpression.printI(Identacion(cantidad))
-			print "No es un booleano"
-			exit()
+			self.rightexpression.printI("")
+			sys.exit(1)
 
 
 class Exp_ProgramEnd:
@@ -1422,7 +1474,7 @@ class Exp_ProgramEnd:
 		#self.printI("")
 		NewSymbolTable = SymbolTable(None)
 
-		#self.typechecking(NewSymbolTable)
+		self.typechecking(NewSymbolTable)
 	
 	def getRow(self):
 		return set.row
@@ -1454,5 +1506,5 @@ class Exp_ProgramEnd:
 				j.typechecking(SymbolTable)
 		
 		if self.instructions:
-			for i in self.instructions:
+			for i in self.instructions:				
 				i.typechecking(SymbolTable)
