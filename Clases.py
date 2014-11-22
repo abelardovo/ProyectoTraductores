@@ -334,7 +334,14 @@ class MatrixFormat:
 				matrizPy.append(listaAux)
 				listaAux = []
 			else:
-				listaAux.append(i.getValue())
+
+				if isinstance(i, Exp_Binaria):
+
+					listaAux.append(i.run({}))
+
+				else:
+
+					listaAux.append(i.getValue())
 		return matrizPy
 
 	def getR(self):
@@ -889,7 +896,7 @@ class Expre_ReturnExpresion:
 		return self.expresion.typechecking(SymbolTable)
 
 	def run(self,dic):
-		
+
 		return self.expresion.run(dic)
 
 
@@ -1712,10 +1719,16 @@ class Exp_Binaria:
 
 			if self.operator == "+":
 				return MatrizIzq + MatrizDer
-			if self.operator == "-":
+			elif self.operator == "-":
 				return MatrizIzq - MatrizDer
-			if self.operator == "*":
+			elif self.operator == "*":
 				return MatrizIzq * MatrizDer
+
+			else :
+
+				print "ERROR: Operacion no admitida para dos matrices"
+				sys.exit(1)		
+
 
 		elif isinstance(ExpresionBaseR,MatrixFormat) and isinstance(ExpresionBaseL,Number):
 			
