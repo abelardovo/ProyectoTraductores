@@ -13,6 +13,7 @@
 '''
 
 import sys
+import numpy as np
 
 # Diccionario para guardar operadores y usarlos posteriormente en las 
 # clases con mayor facilidad
@@ -125,7 +126,7 @@ class Number():
 		return set.row
 
 	def getValue(self):
-		return int(self.value)
+		return self.value
 
 	def getInstance(self):
 		return self.value
@@ -1559,25 +1560,117 @@ class Exp_Binaria:
 
 	def run(self,dic):
 
-
 		ExpresionBaseR =  self.rightexpression
 		ExpresionBaseL = self.leftexpression
 
 		RightType = ExpresionBaseR.run(dic)
 		LeftType = ExpresionBaseL.run(dic)
 
-
-		if isinstance(RightType,int) and isinstance(LeftType,int):
+		if isinstance(ExpresionBaseR,Number) and isinstance(ExpresionBaseL,Number):
 
 			if self.operator == "+":
 				return LeftType + RightType
 
 			elif self.operator == "-":
 				return LeftType - RightType
-			
 
-			
+			elif self.operator == "*":
+				return LeftType * RightType
 
+			elif self.operator == "/":
+				return LeftType / RightType
+
+			elif self.operator == "%":
+				return LeftType % RightType
+
+			elif self.operator == "div":
+				return int(LeftType / RightType)
+
+			elif self.operator == "mod":
+				return LeftType % RightType
+
+			elif self.operator == "==":
+				return LeftType == RightType
+
+			elif self.operator == "/=":
+				return LeftType != RightType
+
+			elif self.operator == "<":
+				return LeftType < RightType
+			
+			elif self.operator == ">":
+				return LeftType > RightType
+			
+			elif self.operator == "<=":
+				return LeftType <= RightType
+			
+			elif self.operator == ">=":
+				return LeftType >= RightType
+
+
+		elif isinstance(ExpresionBaseR,Boolean) and isinstance(ExpresionBaseL,Boolean):
+			
+			if self.operator == "==":
+				return LeftType == RightType
+
+			elif self.operator == "/=":
+				return LeftType != RightType
+
+			elif self.operator == "&":
+				return LeftType and RightType
+
+			elif self.operator == "|":
+				return LeftType or RightType
+
+		elif isinstance(ExpresionBaseR,MatrixFormat) and isinstance(ExpresionBaseL,MatrixFormat):
+
+			MatrizIzq = np.matrix(ExpresionBaseL.run(dic))
+			MatrizDer = np.matrix(ExpresionBaseR.run(dic))
+
+			if self.operator == "+":
+				return MatrizIzq + MatrizDer
+			if self.operator == "-":
+				return MatrizIzq - MatrizDer
+			if self.operator == "*":
+				return MatrizIzq * MatrizDer
+
+		elif isinstance(ExpresionBaseR,MatrixFormat) and isinstance(ExpresionBaseL,Number):
+			
+			MatrizDer = np.matrix(ExpresionBaseR.run(dic))
+
+			if self.operator == ".+.":
+				return LeftType + MatrizDer
+			elif self.operator == ".-.":
+				return LeftType - MatrizDer
+			elif self.operator == ".*.":
+				return LeftType * MatrizDer
+			elif self.operator == "./.":
+				return LeftType / MatrizDer
+			elif self.operator == ".mod.":
+				return LeftType % MatrizDer
+			elif self.operator == ".%.":
+				return LeftType % MatrizDer
+			elif self.operator == ".div.":
+				return LeftType / MatrizDer
+
+		elif isinstance(ExpresionBaseL,MatrixFormat) and isinstance(ExpresionBaseR,Number):
+			
+			MatrizIzq = np.matrix(ExpresionBaseL.run(dic))
+
+			if self.operator == ".+.":
+				return MatrizIzq + RightType
+			elif self.operator == ".-.":
+				return MatrizIzq - RightType
+			elif self.operator == ".*.":
+				return MatrizIzq * RightType
+			elif self.operator == "./.":
+				return MatrizIzq / RightType
+			elif self.operator == ".mod.":
+				return MatrizIzq % RightType
+			elif self.operator == ".%.":
+				return MatrizIzq % RightType
+			elif self.operator == ".div.":
+				return MatrizIzq / RightType
 
 
 class Exp_Unaria:
