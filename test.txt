@@ -1,5 +1,32 @@
+function sum(number a, number b) return number
+begin
+	
+	return a + b;
+
+end;
+
+function min(number a, number b) return number
+begin
+	
+	return a - b;
+
+end;
+
 program 
 
-print {1,2,3:4,5,6} .mod. 2 ;
+use 
 
+number x;
+number y;
+
+in
+
+read x;
+read y;
+
+
+print min(sum(x,y),3) ;
+
+
+end;
 end;

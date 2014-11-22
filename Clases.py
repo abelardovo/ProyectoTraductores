@@ -123,7 +123,7 @@ class Number():
 		self.type = "number"
 	
 	def getRow(self):
-		return set.row
+		return self.row
 
 	def getValue(self):
 		return self.value
@@ -155,7 +155,7 @@ class Identificator:
 		self.type = "id"
 	
 	def getRow(self):
-		return set.row
+		return self.row
 
 	def getValue(self):
 		return self.value
@@ -200,7 +200,7 @@ class String:
 
 	
 	def getRow(self):
-		return set.row
+		return self.row
 
 	def getValue(self):
 		return str(self.value)
@@ -229,7 +229,7 @@ class Boolean:
 		self.type = "boolean"
 	
 	def getRow(self):
-		return set.row
+		return self.row
 		
 	#Funcion para imprimir
 	def printI(self, cantidad):
@@ -267,7 +267,7 @@ class Matrix:
 		self.type = "matriz"
 	
 	def getRow(self):
-		return set.row
+		return self.row
 
 	def getR(self):
 		return int(self.R.getValue())
@@ -320,7 +320,7 @@ class MatrixFormat:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
+		return self.row
 
 	def transform(self):
 		
@@ -470,7 +470,7 @@ class Expre_If_Else:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
+		return self.row
 	
 	#Funcion para imprimir
 	def printI(self, cantidad):
@@ -531,7 +531,7 @@ class Expre_Set:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
+		return self.row
 		
 	#Funcion para imprimir
 	def printI(self, cantidad):
@@ -593,7 +593,7 @@ class Variable_Declaration:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
+		return self.row
 
 	def getIdentificator(self):
 		return self.identificator.getValue()
@@ -742,12 +742,6 @@ class Expre_Read:
 
 		dic[self.identificator.getValue()] = entrada
 
-
-
-
-
-
-
 class Expre_Vector:
 	"""Clase que maneja los vectores
 
@@ -765,7 +759,7 @@ class Expre_Vector:
 		self.type = "vector"
 	
 	def getRow(self):
-		return set.row
+		return self.row
 
 	def getValue(self):
 		return self.identificator.getValue()
@@ -839,6 +833,31 @@ class Expre_Vector:
 
 				return "number"
 
+	def run(self, dic):
+
+
+		ExpresionBaseI = self.identificator
+
+		if isinstance(ExpresionBaseI, Exp_Unaria):
+			ExpresionBaseI.run(dic)
+
+		if isinstance(ExpresionBaseI, Identificator):
+			ExpresionBaseI = ExpresionBaseI.run(dic)
+
+
+		elif isinstance(ExpresionBaseI, Matrix) or isinstance(ExpresionBaseI, MatrixFormat):
+			ExpresionBaseI = self.identificator.run(dic)
+		
+		elif isinstance(ExpresionBaseI, Exp_Binaria):
+			ExpresionBaseI = ExpresionBaseI.run(dic)
+
+		if self.columna:
+
+			return ExpresionBaseI[self.fila.getValue() - 1][self.columna.getValue() - 1]
+
+		return ExpresionBaseI[self.fila.getValue() -1 ]
+
+
 
 class Expre_ReturnExpresion:
 	"""Clase que maneja los return
@@ -853,7 +872,7 @@ class Expre_ReturnExpresion:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
+		return self.row
 
 	def getExpression(self):
 		return self.expresion
@@ -870,6 +889,7 @@ class Expre_ReturnExpresion:
 		return self.expresion.typechecking(SymbolTable)
 
 	def run(self,dic):
+		
 		return self.expresion.run(dic)
 
 
@@ -887,7 +907,7 @@ class Inst_PrintExpresion:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
+		return self.row
 	
 	#Funcion para imprimir
 	def printI(self, cantidad):
@@ -930,7 +950,7 @@ class Expre_UseIn:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
+		return self.row
 	
 	#Funcion para imprimir
 	def printI(self, cantidad):
@@ -1008,7 +1028,7 @@ class Expre_While:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
+		return self.row
 	
 	#Funcion para imprimir
 	def printI(self, cantidad):
@@ -1059,7 +1079,7 @@ class Expre_For:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
+		return self.row
 	
 	#Funcion para imprimir
 	def printI(self, cantidad):
@@ -1139,7 +1159,7 @@ class LlamadoFunction:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
+		return self.row
 	
 	#Funcion para imprimir
 	def printI(self, cantidad):
@@ -1152,6 +1172,17 @@ class LlamadoFunction:
 			for j in self.ListIdentification:
 				print cantidad, " Parametro: "
 				j.printI(Identacion(cantidad))
+
+	def findinDic(self,dic,identificador):
+
+		i = len (Results) - 1
+
+		while i >= 0:
+
+			if Results[i].has_key(identificador):
+				return Results[i][identificador]
+
+			i = i-1
 
 	def typechecking(self,STable):
 
@@ -1205,9 +1236,25 @@ class LlamadoFunction:
 		if isinstance(returnType, Matrix):
 			return returnType
 
-		print returnType.typechecking(STable)
-
 		return returnType.typechecking(STable)
+
+	def run(self,dic):
+
+		InstanceFuncion = self.findinDic(dic,self.identificator.getValue())
+
+		listaAux = []
+
+		for i in self.ListIdentification:
+
+			listaAux.append(i.run(dic))
+
+		dic = {}
+
+		Results.append(dic)
+
+		return InstanceFuncion.run2(dic,listaAux)
+
+
 
 
 class Function:
@@ -1230,8 +1277,11 @@ class Function:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
-	
+		return self.row
+
+	def getVD(self):
+		return self.variable_declaration
+
 	#Funcion para imprimir
 	def printI(self, cantidad):
 
@@ -1327,6 +1377,28 @@ class Function:
 				print "ERROR: los tipos de los return son distintos"
 				sys.exit(1)
 
+	def run(self,dic):
+
+		dic[self.identificator.getValue()] = self
+
+	def run2(self,dic, Parametros):
+
+		if self.variable_declaration:
+			i = len (self.variable_declaration) - 1
+			while i>=0:
+
+				dic[self.variable_declaration[i].getIdentificator()] = Parametros[i]
+
+				i=i-1
+
+		if self.instructions:
+			for j in self.instructions:
+
+				if isinstance(j,Expre_ReturnExpresion):
+					return j.run(dic)
+
+				
+
 class Exp_Comments:
 	"""Clase que maneja los Comentarios   
 
@@ -1341,7 +1413,7 @@ class Exp_Comments:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
+		return self.row
 	
 	#Funcion para imprimir
 	def printI(self, cantidad):
@@ -1370,7 +1442,7 @@ class Exp_Paren:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
+		return self.row
 	
 	#Funcion para imprimir
 	def printI(self, cantidad):
@@ -1404,7 +1476,7 @@ class Exp_Binaria:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
+		return self.row
 	
 	#Funcion para imprimir
 	def printI(self, cantidad):
@@ -1566,47 +1638,58 @@ class Exp_Binaria:
 		RightType = ExpresionBaseR.run(dic)
 		LeftType = ExpresionBaseL.run(dic)
 
+		if isinstance(ExpresionBaseL, Identificator):
+			ExpresionBaseL = Number(ExpresionBaseL.run(dic),ExpresionBaseL.getRow())
+
+		if isinstance(ExpresionBaseR, Identificator):
+			ExpresionBaseR = Number(ExpresionBaseR.run(dic),ExpresionBaseR.getRow())
+
+		if isinstance(ExpresionBaseL, Exp_Binaria):
+			ExpresionBaseL = Number(ExpresionBaseL.run(dic),ExpresionBaseL.getRow())
+
+		if isinstance(ExpresionBaseR, Exp_Binaria):
+			ExpresionBaseR = Number(ExpresionBaseR.run(dic),ExpresionBaseR.getRow())
+
+		if isinstance(ExpresionBaseL, Exp_Unaria):
+			ExpresionBaseL = Number(ExpresionBaseL.run(dic),ExpresionBaseL.getRow())
+
+		if isinstance(ExpresionBaseR, Exp_Unaria):
+			ExpresionBaseR = Number(ExpresionBaseR.run(dic),ExpresionBaseR.getRow())
+
+		if isinstance(ExpresionBaseL, LlamadoFunction):
+			ExpresionBaseL = ExpresionBaseL.run(dic)
+
+		if isinstance(ExpresionBaseR, LlamadoFunction):
+			ExpresionBaseR = ExpresionBaseR.run(dic)
+
 		if isinstance(ExpresionBaseR,Number) and isinstance(ExpresionBaseL,Number):
 
 			if self.operator == "+":
 				return LeftType + RightType
-
 			elif self.operator == "-":
 				return LeftType - RightType
-
 			elif self.operator == "*":
 				return LeftType * RightType
-
 			elif self.operator == "/":
 				return LeftType / RightType
-
 			elif self.operator == "%":
 				return LeftType % RightType
-
 			elif self.operator == "div":
 				return int(LeftType / RightType)
-
 			elif self.operator == "mod":
 				return LeftType % RightType
-
 			elif self.operator == "==":
 				return LeftType == RightType
-
 			elif self.operator == "/=":
 				return LeftType != RightType
-
 			elif self.operator == "<":
 				return LeftType < RightType
-			
 			elif self.operator == ">":
 				return LeftType > RightType
-			
 			elif self.operator == "<=":
 				return LeftType <= RightType
-			
 			elif self.operator == ">=":
 				return LeftType >= RightType
-
 
 		elif isinstance(ExpresionBaseR,Boolean) and isinstance(ExpresionBaseL,Boolean):
 			
@@ -1689,7 +1772,7 @@ class Exp_Unaria:
 		self.row = row
 	
 	def getRow(self):
-		return set.row
+		return self.row
 	
 	#Funcion para imprimir
 	def printI(self, cantidad):
@@ -1796,7 +1879,7 @@ class Exp_ProgramEnd:
 		self.run({})
 	
 	def getRow(self):
-		return set.row
+		return self.row
 	
 	#Funcion para imprimir el arbol
 	def printI(self, cantidad):
@@ -1833,9 +1916,10 @@ class Exp_ProgramEnd:
 		if self.FunctionSpecification:
 			for j in self.FunctionSpecification:
 				j.run(dic)
+
+		Results.append(dic)
 		
 		if self.instructions:
 			for i in self.instructions:				
 				i.run(dic)
 
-		# print Results	
