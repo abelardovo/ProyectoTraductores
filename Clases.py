@@ -42,7 +42,7 @@ symbolsDic = {
 						".+." 	: "plus cross",
 					} 
 
-
+Results = []
 
 
 # Funcion para impresion de tab
@@ -139,6 +139,9 @@ class Number():
 
 		return self.type
 
+	def run(self,dic):
+
+		return self.getValue()
 
 class Identificator:
 	"""Clase que maneja a los Identificador (ID)"""
@@ -161,6 +164,17 @@ class Identificator:
 
 		print cantidad, "Nombre: ", str(self.value)
 
+	def findinDic(self,dic,identificador):
+
+		i = len (Results) - 1
+
+		while i >= 0:
+
+			if Results[i].has_key(identificador):
+				return Results[i][identificador]
+
+			i = i-1
+
 	def typechecking(self,SymbolTable):
 
 		if SymbolTable.hasKey(self.value) == False:
@@ -168,6 +182,10 @@ class Identificator:
 			sys.exit(1)
 
 		return SymbolTable.findTypeOf(self.value)
+
+	def run(self,dic):
+
+		return self.findinDic(dic,self.value)
 
 class String:
 	"""Clase que maneja a los String"""
@@ -195,6 +213,10 @@ class String:
 
 		return self.type
 
+	def run(self,dic):
+
+		return self.getValue()	
+
 class Boolean:
 	"""Clase que maneja a los Booleanos"""
 
@@ -217,6 +239,16 @@ class Boolean:
 	def typechecking(self,SymbolTable):
 
 		return self.type
+
+	def run(self,dic):
+
+		if self.value == "true":
+			return True
+		elif self.value == "false":
+			return False
+
+		print "/ERROR/: EL boolenao mal declarado "
+		sys.exit(1)
 
 class Matrix:
 	"""Clase que maneja a las Matrices "matrix(R,C)" """
@@ -288,6 +320,21 @@ class MatrixFormat:
 	
 	def getRow(self):
 		return set.row
+
+	def transform(self):
+		
+		matrizPy = []
+		listaAux = []
+
+		for i in self.MatrixValue:
+			if i == ",":
+				pass
+			elif i == ":":
+				matrizPy.append(listaAux)
+				listaAux = []
+			else:
+				listaAux.append(i.getValue())
+		return matrizPy
 
 	def getR(self):
 
@@ -406,7 +453,9 @@ class MatrixFormat:
 		return "matriz"
 		#return Matrix(Number(self.getR(),self.row),Number(self.getC(),self.row),self.row)
 
+	def run(self,dic):
 
+		return self.transform()
 
 class Expre_If_Else:
 	"""Clase que maneja a los condicionales IF <condicion> THEN <Intrucciones> END;"""
@@ -451,12 +500,22 @@ class Expre_If_Else:
 
 		if self.instruction:
 			for j in self.instruction:
-				print j
 				j.typechecking(SymbolTable)	
 
 		if self.instruction2:
 			for k in self.instruction2:
 				k.typechecking(SymbolTable)
+
+	def run(self,dic):
+		if self.condition.run(dic):
+			if self.instruction:
+				for j in self.instruction:
+					j.run(dic)
+
+		else:	
+			if self.instruction2:
+				for k in self.instruction2:
+					k.run(dic)		
 
 
 
@@ -509,6 +568,11 @@ class Expre_Set:
 					print "ERROR: el tamanio de la matriz en el identificador es distinto al de la expresion"
 					sys.exit(1)
 
+	def run(self,dic):
+
+		#print self.identificator
+
+		dic[self.identificator.getValue()] = self.expression.run(dic)
 
 
 class Variable_Declaration:
@@ -606,6 +670,17 @@ class Variable_Declaration:
 
 		SymbolTable.addSymbol(self.identificator.getValue(),self.identificator_type)
 
+	def run(self,dic):
+
+		if self.expression: 
+
+			dic[self.identificator.getValue()] = self.expression.run(dic)
+
+		else:
+
+			dic[self.identificator.getValue()] = self.identificator_type
+
+
 
 class Expre_Read:
 	"""Clase que maneja la lectura por linea de comando
@@ -642,6 +717,34 @@ class Expre_Read:
 
 			print "ERROR: El identificador solo puede ser booleano o un numero"
 			sys.exit(1)
+
+	def run(self,dic):
+
+		entrada = raw_input()
+
+		if entrada== "true" and self.identificator.run(dic) == "boolean":
+
+			entrada = True
+
+		elif entrada== "false" and self.identificator.run(dic) == "boolean": 
+
+			entrada = False 
+
+		elif isinstance(int(entrada),int) and self.identificator.run(dic) == "number":
+
+			entrada = int(entrada)
+
+		else:
+
+			print "ERROR: solo se aceptan booleanos o enteros y debe coincidir con el tipo declarado"
+			exit()
+
+		dic[self.identificator.getValue()] = entrada
+
+
+
+
+
 
 
 class Expre_Vector:
@@ -765,6 +868,10 @@ class Expre_ReturnExpresion:
 
 		return self.expresion.typechecking(SymbolTable)
 
+	def run(self,dic):
+		return self.expresion.run(dic)
+
+
 
 class Inst_PrintExpresion:
 	"""Clase que maneja la impresion 
@@ -793,6 +900,15 @@ class Inst_PrintExpresion:
 
 		for j in self.PrintExpresion:
 			j.typechecking(SymbolTable)
+
+	def run(self,dic):
+
+		aux = ""
+		for j in self.PrintExpresion:
+			aux = aux + " " +str(j.run(dic))	
+
+		print aux
+
 
 class Expre_UseIn:
 	"""Clase que maneja los Use-In 
@@ -854,7 +970,24 @@ class Expre_UseIn:
 					print "ERROR: solo se puede declarar variables dentro del alcance del USE"
 					sys.exit(1)
 
-				j.typechecking(NewSymbolTable)		
+				j.typechecking(NewSymbolTable)	
+
+	def run(self, dic):
+
+		dic= {}		
+		Results.append(dic)
+
+
+		if self.declarations:
+			for i in self.declarations:
+				i.run(dic)	
+
+		if self.instructions:
+			for j in self.instructions:
+				j.run(dic)	
+
+		Results.pop()
+
 
 
 class Expre_While:
@@ -896,7 +1029,15 @@ class Expre_While:
 
 		if self.instructions:
 			for j in self.instructions:
-				j.typechecking(SymbolTable)		
+				j.typechecking(SymbolTable)	
+
+	def run(self,dic):
+
+		while self.condition.run(dic):
+
+			if self.instructions:
+				for j in self.instructions:
+					j.run(dic)			
 
 
 class Expre_For:
@@ -954,6 +1095,32 @@ class Expre_For:
 
 			for j in self.instructions:
 				j.typechecking(NewSymbolTable)
+
+	def run(self,dic):
+
+
+		dic = {}
+
+		Results.append(dic)
+
+		ExpressionType = self.expression.run(dic)
+
+		identificadorAux = self.identificator.getValue()
+
+		dic[identificadorAux] = None
+
+		for identificador in ExpressionType:
+			
+			for j in identificador:
+
+				dic[identificadorAux] = j
+
+				if self.instructions:
+
+					for k in self.instructions:
+						k.run(dic)
+
+		Results.pop()
 
 
 class LlamadoFunction:
@@ -1181,8 +1348,10 @@ class Exp_Comments:
 		print cantidad, "Comentario: ", self.comentario
 
 	def typechecking(self,SymbolTable):
-		print "Revision "
 		return "comments"
+
+	def run(self,dic):
+		pass
 
 class Exp_Paren:
 	"""Clase que maneja las expresiones binarias 
@@ -1213,6 +1382,9 @@ class Exp_Paren:
 	def typechecking(self,SymbolTable):
 
 		return self.exp.typechecking(SymbolTable)
+
+	def run(self,dic):
+		return self.exp.run(dic)
 
 
 class Exp_Binaria:
@@ -1382,7 +1554,31 @@ class Exp_Binaria:
 		else:
 
 			print "ERROR: Los tipos de las expresiones no son comparables"
-			sys.exit(1)			
+			sys.exit(1)	
+
+
+	def run(self,dic):
+
+
+		ExpresionBaseR =  self.rightexpression
+		ExpresionBaseL = self.leftexpression
+
+		RightType = ExpresionBaseR.run(dic)
+		LeftType = ExpresionBaseL.run(dic)
+
+
+		if isinstance(RightType,int) and isinstance(LeftType,int):
+
+			if self.operator == "+":
+				return LeftType + RightType
+
+			elif self.operator == "-":
+				return LeftType - RightType
+			
+
+			
+
+
 
 class Exp_Unaria:
 	"""Clase que maneja las expresiones unarias 
@@ -1411,15 +1607,6 @@ class Exp_Unaria:
 	def typechecking(self,SymbolTable):
 
 		expType = self.rightexpression.typechecking(SymbolTable)
-
-
-		# if isinstance(expType, Exp_Unaria):
-		# 	expType = expType.typechecking(SymbolTable)		
-
-		# if isinstance(expType, Matrix):
-		# 	expType = expType.typechecking(SymbolTable)
-
-		# print expType, self.operator
 
 		if expType == "boolean" and self.operator == "not":
 			return "boolean"
@@ -1453,6 +1640,44 @@ class Exp_Unaria:
 			self.rightexpression.printI("")
 			sys.exit(1)
 
+	def run(self, dic):
+
+		expType = self.rightexpression.run(dic)
+
+		if isinstance(expType,bool) and self.operator == "not":
+
+			return not (expType)
+
+		elif isinstance(expType, int) and self.operator == "-":
+			return -(expType)
+
+		elif ((isinstance(expType, Exp_Unaria) or isinstance(expType, Matrix) ) and self.operator == "'"):
+
+			return Matrix(Number(expType.getC(),self.row),Number(expType.getR(),self.row),self.row) 
+
+		elif ((isinstance(expType, Exp_Unaria) or isinstance(expType, Matrix) ) and self.operator == "-"):
+
+			return Matrix(Number(expType.getR(),self.row),Number(expType.getC(),self.row),self.row) 
+
+		elif (expType == "matriz" and self.operator == "-"):
+			
+
+			return Matrix(Number(self.rightexpression.getR(),self.row),Number(self.rightexpression.getC(),self.row),self.row) 
+
+
+		elif (expType == "matriz" and self.operator == "'"):
+			
+			return Matrix(Number(self.rightexpression.getC(),self.row),Number(self.rightexpression.getR(),self.row),self.row) 
+
+			# return "matriz"
+
+		else:
+
+			print "ERROR: La expresion: "
+			self.rightexpression.printI("")
+			sys.exit(1)
+
+
 
 class Exp_ProgramEnd:
 	"""Clase que maneja las expresiones Program y End 
@@ -1475,6 +1700,7 @@ class Exp_ProgramEnd:
 		NewSymbolTable = SymbolTable(None)
 
 		self.typechecking(NewSymbolTable)
+		self.run({})
 	
 	def getRow(self):
 		return set.row
@@ -1508,3 +1734,15 @@ class Exp_ProgramEnd:
 		if self.instructions:
 			for i in self.instructions:				
 				i.typechecking(SymbolTable)
+
+	def run(self,dic):
+
+		if self.FunctionSpecification:
+			for j in self.FunctionSpecification:
+				j.run(dic)
+		
+		if self.instructions:
+			for i in self.instructions:				
+				i.run(dic)
+
+		# print Results	
