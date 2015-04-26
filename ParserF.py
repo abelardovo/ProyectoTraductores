@@ -370,9 +370,7 @@ def p_ParameterBase(p):
 #Gramatica para el tipo matrix
 def p_Matrix(p):
 	'''Matrix : TK_Matrix TK_ParenI Number TK_Comma Number TK_ParenD'''
-			  #| TK_Matrix TK_ParenI ID TK_Comma ID TK_ParenD
-			  #| TK_Matrix TK_ParenI Number TK_Comma ID TK_ParenD
-			  #| TK_Matrix TK_ParenI ID TK_Comma Number TK_ParenD'''
+			  
 	p[0] = Clases.Matrix(p[3],p[5],p.lineno)
 
 # #Gramatica para el tipo matrix
@@ -396,17 +394,6 @@ def p_Column(p):
 def p_Vector(p):
 	''' Vector : Expresion TK_BracketI Expresion TK_BracketD
 			   | Expresion TK_BracketI Expresion TK_Comma Expresion TK_BracketD'''
-
-			  # ID TK_BracketI ID TK_BracketD
-			  #  | ID TK_BracketI Number TK_BracketD
-			  #  | ID TK_BracketI ID TK_Comma ID TK_BracketD
-			  #  | ID TK_BracketI Number TK_Comma Number TK_BracketD
-			  #  | ID TK_BracketI ID TK_Comma Number TK_BracketD
-			  #  | ID TK_BracketI Number TK_Comma ID TK_BracketD
-			  #  | Matrix TK_BracketI Number TK_Comma ID TK_BracketD
-			  #  | Matrix TK_BracketI ID TK_Comma ID TK_BracketD
-			  #  | Matrix TK_BracketI ID TK_Comma Number TK_BracketD
-			  #  | Matrix TK_BracketI Number TK_Comma Number TK_BracketD
 
 	if len(p) == 5:
 		p[0] = Clases.Expre_Vector(p.lineno,p[1],p[3])
